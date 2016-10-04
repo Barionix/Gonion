@@ -1,5 +1,5 @@
 package main
-
+//AUTHOR = ["Junior Mário", "https://github.com/JuniorMario"]
 import (
 	"flag"
 	"fmt"
