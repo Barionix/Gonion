@@ -1,5 +1,5 @@
 
-# Gonion
+# Gonion 0.0.1
 ## Gonion é um buscador/verificador de dominios .onion
 
 ##Uso
