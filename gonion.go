@@ -1,5 +1,7 @@
 package main
+
 //AUTHOR = ["Junior Mário", "https://github.com/JuniorMario"]
+
 import (
 	"flag"
 	"fmt"
@@ -7,6 +9,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"regexp"
 	"os"
 	"strings"
 )
@@ -63,17 +66,15 @@ func write(link string) {
 	check_error(err)
 }
 func validate(file string) {
-	var tryer []string
 	dat, err := ioutil.ReadFile(file)
 	check_error(err)
-	a := strings.Split(string(dat), "http")
-	for _, i := range a {
-		tryer = append(tryer, "http"+strings.Split(i, " ")[0])
-	}
-	for _, link := range tryer {
-		a := check(link)
+	re, err := regexp.Compile(`(.*)/`)
+  check_error(err)
+  res := re.FindAllStringSubmatch(string(dat), -1)
+	for _, link := range res {
+		a := check(link[0])
 		if a == true {
-			write(link)
+			write(link[0])
 		}
 	}
 }
