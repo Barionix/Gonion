@@ -20,7 +20,7 @@ _-limit=_ - Define o limite máximo de gouroutines.
 ```
 ./gonion -action=generate QUANTIDADE_DE_LINKS_A_SER_GERADO
 ```
-_PS: Você pode deixar o comando rodando em background, basta usar_
+_PS: É recomendado deixar o comando rodando em background, basta usar_
 ```
 ./gonion -action=generate QUANTIDADE &
 ```
