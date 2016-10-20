@@ -10,7 +10,7 @@ bar :arquivo_txt.txt
 bar link
 generate quantidade
 ```
-_-limit=_ - Define a quantidade de links a serem gerados/testados.
+_-limit=_ - Define o limite máximo de gouroutines.
 (Recomendado a partir de 500)
 ### - Verificador -
 ```
