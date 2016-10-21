@@ -43,6 +43,13 @@ func check_error(err error) {
 /* Iniciando uma variavel global do tipo Conf */
 var C Conf
 
+/* Imprime o Banner */
+func Banner() {
+	banner, err := ioutil.ReadFile("output/banner.txt")
+	check_error(err)
+	fmt.Print(string(banner))
+}
+
 /* Escreve o log */
 func log(str string) {
 	res := read("log") + str
@@ -230,6 +237,7 @@ func parse(Action string, Limit int) {
 }
 
 func main() {
+	Banner()
 	var Action = flag.String("action", "0", "Configuração de range.")
 	var Limit = flag.Int("limit", 50, "Limite de GoRoutines")
 	flag.Parse()
