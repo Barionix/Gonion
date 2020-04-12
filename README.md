@@ -1,9 +1,9 @@
 # Gonion #Versão#  0.0.2
 
-##Descrição
+
 Aplicação desenvolvida na linguagem Go com a função de buscar e/ou verificar domínios  *.onion*
 
-##Uso
+## Uso
 ### Opções(Flag)
 
 Opção               |  Descrição              
@@ -21,11 +21,11 @@ _-action=link :arquivo.txt_ - Começa a buscar a partir de links em um arquivo.t
 * Exemplos usando `-limit=`:
 _-limit=500_ Seta 500 como limite de Goroutines
 
-###Verificador
+### Verificador
 
 Uso : `./gonion -validate=<nome do arquivo com os links>`  
 
-###Buscador (by RANGE)
+### Buscador (by RANGE)
 
 Uso : `./gonion -action=generate <quantidade de links a ser gerada>`
 
