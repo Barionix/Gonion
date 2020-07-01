@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"h12.me/socks"
+	"h12.io/socks"
 )
 
 /* Struct de configuração */
@@ -51,7 +51,7 @@ func Banner() {
 
 /* Escreve o log */
 func Log(str string) {
-	res := Read("log") + strings.Split(str, " ")[0]
+	res := Read("log") + str
 	btwrite := []byte(res)
 	err := ioutil.WriteFile("output/log.txt", btwrite, 0644)
 	Check_error(err)
@@ -72,10 +72,29 @@ func Write(link string) {
 	Check_error(err)
 }
 
+func Write_Check(link string) {
+	res := Read("checked") + strings.Split(link, " ")[0]
+	btwrite := []byte(res)
+	err := ioutil.WriteFile("output/checked.txt", btwrite, 0644)
+	Check_error(err)
+}
+
 /* Verifica se o link está no arquivo de output */
-func Already(link string) bool {
+func Already_wrote(link string) bool {
 	var res bool
 	dat, err := ioutil.ReadFile("output/links.txt")
+	Check_error(err)
+	if strings.Contains(string(dat), link) {
+		res = false
+	} else {
+		res = true
+	}
+	return res
+}
+
+func Already(link string) bool {
+	var res bool
+	dat, err := ioutil.ReadFile("output/checked.txt")
 	Check_error(err)
 	if strings.Contains(string(dat), link) {
 		res = false
@@ -97,8 +116,11 @@ func Check_and(link string) string {
 	var res string
 	tr := Dialer()
 	httpClient := &http.Client{Transport: tr}
+	fmt.Println("tentando com " + link)
 	resp, err := httpClient.Get(link)
 	if err != nil {
+		/* Cria uma nova conexão*/
+		fmt.Println(err)
 		res = "ERROR"
 		_ = resp
 	} else {
@@ -118,31 +140,35 @@ func Check(link string) bool {
 	httpClient := &http.Client{Transport: tr}
 	_, err := httpClient.Get(link)
 	if err != nil {
-		Log(link + "--> 404")
+		Log(link + " --> 404")
 	} else {
 		res = true
-		Log(link + "--> OK")
+		Log(link + " --> OK")
 	}
 	return res
 }
 
-/* Algoritimo de busca por crawling */
+/* Algoritimo de busca por crawl
+h */
 func Bar(link string) {
 	a := Check_and(link)
-	re, err := regexp.Compile(`http://(.*).onion/`)
+	Write_Check(link)
+	re, err := regexp.Compile("http://([A-Za-z0-9])*.onion/([A-Za-z0-9])*")
 	Check_error(err)
 	res := re.FindAllStringSubmatch(a, -1)
+	fmt.Println(len(res))
 	for _, lk := range res {
-		if len(lk) > 0 && C.Check_rountine() {
-			if Already(lk[0]) {
+		if C.Check_rountine() {
+			if Already_wrote(lk[0]) {
 				C.Found += 1
-				fmt.Println("\r" + "[ - " + strconv.Itoa(C.Found) + " Found - ]")
 				Write(lk[0])
-				go Bar(lk[0])
 			}
 		}
 	}
-	runtime.Goexit()
+	fmt.Println("[ Done with: " + link + " Found " + strconv.Itoa(C.Found) + " Links ]")
+	C.Found = 0
+	File_bar("output/links.txt")
+
 }
 
 /* Algoritimo de busca que gera links aleatórios e os testa */
@@ -157,7 +183,6 @@ func Generate() {
 	comp = strings.Join(res, "") + ".onion/"
 	verified = Check(comp)
 	if verified {
-		Log("FUCKING WORKING")
 		Write(comp)
 	}
 	runtime.Goexit()
@@ -184,14 +209,14 @@ func Valid(file string) {
 
 /* Passa um arquivo de links como parametro para o algoritmo de crawling */
 func File_bar(file string) {
-	dat, err := ioutil.ReadFile(strings.Split(file, ":")[1])
+	dat, err := ioutil.ReadFile(file)
 	Check_error(err)
-	re, err := regexp.Compile(`(.*)/`)
+	re, err := regexp.Compile("http://([A-Za-z0-9])*.onion/([A-Za-z0-9])*")
 	Check_error(err)
 	res := re.FindAllStringSubmatch(string(dat), -1)
 	for _, link := range res {
-		if C.Check_rountine() {
-			go Bar(link[0])
+		if Already(link[0]) {
+			Bar(link[0])
 		}
 	}
 }
